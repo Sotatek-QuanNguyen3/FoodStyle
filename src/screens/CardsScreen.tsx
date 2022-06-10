@@ -6,14 +6,28 @@ import {
   SafeAreaView,
   FlatList,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {config} from '../config';
 import LinearGradient from 'react-native-linear-gradient';
 import {images} from '../assets/images';
 import {SafeHeaderView} from '../components/SafeHeaderView';
+import {RootState, useAppDispatch} from '../store';
+import {cardsAction, createCardAction} from '../store/foodThunk';
+import {useSelector} from 'react-redux';
+import {Card} from '../store/foodSlice';
+import CardStyle from '../components/CardStyle';
+import {CardOptions} from '../components/CardOptions';
 
 export function CardsScreen() {
+  const dispatch = useAppDispatch();
+  const cards = useSelector<RootState>(s => s.food.cards) as Card[];
+
+  useEffect(() => {
+    dispatch(cardsAction());
+  }, [dispatch]);
+
   const renderHeader = () => {
     return (
       <LinearGradient
@@ -24,20 +38,28 @@ export function CardsScreen() {
         <LinearGradient
           style={styles.f1}
           colors={['transparent', config.colors.gray + 10, config.colors.gray]}>
-          <SafeAreaView>
-            <SafeHeaderView />
-            <Image source={images.logo} style={styles.logo} />
-          </SafeAreaView>
+          <SafeHeaderView />
+          <Image source={images.logo} style={styles.logo} />
         </LinearGradient>
       </LinearGradient>
     );
+  };
+
+  const createCard = async () => {
+    try {
+      await dispatch(createCardAction('My Food ' + Date.now().toString()));
+    } catch (e) {
+      Alert.alert('', 'An error occurred. Please try again after some time.');
+    }
   };
 
   const renderFooter = () => (
     <SafeAreaView
       style={[{backgroundColor: config.colors.white}, config.shadow]}>
       <View style={styles.footer}>
-        <TouchableOpacity style={[styles.button, config.shadow]}>
+        <TouchableOpacity
+          style={[styles.button, config.shadow]}
+          onPress={createCard}>
           <Image style={styles.iconAdd} source={images.add} />
           <Text style={styles.textBtn}>New Food Style</Text>
         </TouchableOpacity>
@@ -48,8 +70,15 @@ export function CardsScreen() {
   return (
     <View style={styles.container}>
       {renderHeader()}
-      <FlatList data={[]} keyExtractor={e => e.id} />
+      <FlatList
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.list}
+        data={cards}
+        keyExtractor={e => e.id}
+        renderItem={({item}) => <CardStyle card={item} />}
+      />
       {renderFooter()}
+      <CardOptions />
     </View>
   );
 }
@@ -95,5 +124,9 @@ const styles = StyleSheet.create({
     fontFamily: config.fontBold,
     color: config.colors.greyishBrown,
     fontSize: 18,
+  },
+  list: {
+    paddingBottom: 30,
+    paddingTop: 60 + config.statusBarHeight,
   },
 });

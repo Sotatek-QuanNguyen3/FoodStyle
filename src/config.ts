@@ -1,4 +1,5 @@
 import {Platform} from 'react-native';
+import {getStatusBarHeight} from 'react-native-status-bar-height';
 
 export const config = {
   fontRegular: Platform.select({
@@ -15,7 +16,9 @@ export const config = {
     gray: '#f8f8f8',
     white: '#ffffff',
     greyishBrown: '#434343',
+    green: '#11b777',
   },
+  statusBarHeight: getStatusBarHeight(),
   shadow: {
     shadowColor: '#000',
     shadowOffset: {

@@ -12,7 +12,7 @@ export function SplashScreen() {
 
   const login = useCallback(async () => {
     try {
-      await dispatch(loginAction()).unwrap();
+      await dispatch(loginAction('quan.nguyen3@sotatek.com')).unwrap();
       navigation.navigate('CardsScreen');
     } catch (e) {
       Alert.alert('', 'An error occurred. Please try again after some time.', [
