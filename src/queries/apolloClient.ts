@@ -1,10 +1,9 @@
 import {ApolloClient, createHttpLink, InMemoryCache} from '@apollo/client';
 import {setContext} from '@apollo/client/link/context';
+import {config} from '../config';
 import {store} from '../store';
 
-const httpLink = createHttpLink({
-  uri: 'https://api-dev.foodstyles.com/graphql',
-});
+const httpLink = createHttpLink({uri: config.graphUrl});
 
 const authLink = setContext((_, {headers}) => {
   const token = store.getState().food.accessToken;

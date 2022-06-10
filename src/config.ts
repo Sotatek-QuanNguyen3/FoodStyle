@@ -29,4 +29,6 @@ export const config = {
     shadowRadius: 2.62,
     elevation: 4,
   },
+  shareUrl: 'https://cards.foodstyles.com',
+  graphUrl: 'https://api-dev.foodstyles.com/graphql',
 };

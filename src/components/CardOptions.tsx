@@ -67,7 +67,7 @@ export function CardOptions() {
       const code = await shareCardQuery(card.id);
       Share.share({
         message: card.name,
-        url: `https://cards.foodstyles.com/${code}`,
+        url: `${config.shareUrl}/${code}`,
       });
     } catch (e) {
       Alert.alert('', 'An error occurred. Please try again after some time.');
