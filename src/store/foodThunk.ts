@@ -2,6 +2,8 @@ import {createAsyncThunk} from '@reduxjs/toolkit';
 import {
   cardsQuery,
   createCardQuery,
+  deleteCardQuery,
+  duplicateCardQuery,
   loginQuery,
   registerQuery,
 } from '../queries';
@@ -32,6 +34,23 @@ export const createCardAction = createAsyncThunk(
   '/createCardAction',
   async (name: string) => {
     const card = await createCardQuery(name);
+    return card;
+  },
+);
+
+export const deleteCardAction = createAsyncThunk(
+  '/deleteCardAction',
+  async (id: number) => {
+    await deleteCardQuery(id);
+    return id;
+  },
+);
+
+export const duplicateCardAction = createAsyncThunk(
+  '/duplicateCardAction',
+  async (id: number) => {
+    const card = await duplicateCardQuery(id);
+    console.log(card);
     return card;
   },
 );

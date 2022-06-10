@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   ImageSourcePropType,
 } from 'react-native';
-import React, {useEffect, useRef} from 'react';
+import React, {useRef} from 'react';
 import {Card} from '../store/foodSlice';
 import {config} from '../config';
 import {images} from '../assets/images';
@@ -20,34 +20,20 @@ interface CardStyleProps {
 }
 
 export default function CardStyle({card, onPress, image}: CardStyleProps) {
-  const local = useRef<{view: View | null; py: number}>({
-    view: null,
-    py: 0,
-  }).current;
+  const local = useRef<{view: View | null}>({view: null}).current;
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    local.view?.measure((fx, fy, w, h, px, py) => {
-      local.py = py;
-    });
-  }, [local]);
-
   const showOptions = () => {
-    dispatch(showCardAction({card, py: local.py}));
+    local.view?.measure((fx, fy, w, h, px, py) => {
+      dispatch(showCardAction({card, py}));
+    });
   };
 
   return (
     <TouchableOpacity
       onPress={onPress || showOptions}
       ref={e => (local.view = e)}
-      style={[styles.container, config.shadow]}
-      onLayout={event => {
-        const layout = event.nativeEvent.layout;
-        console.log('height:', layout.height);
-        console.log('width:', layout.width);
-        console.log('x:', layout.x);
-        console.log('y:', layout.y);
-      }}>
+      style={[styles.container, config.shadow]}>
       <Text style={styles.name}>{card.name}</Text>
       <Image source={image || images.options} />
     </TouchableOpacity>

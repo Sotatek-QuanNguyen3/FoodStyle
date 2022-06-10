@@ -2,12 +2,14 @@ import {createSlice} from '@reduxjs/toolkit';
 import {
   cardsAction,
   createCardAction,
+  deleteCardAction,
+  duplicateCardAction,
   loginAction,
   showCardAction,
 } from './foodThunk';
 
 export interface Card {
-  id: string;
+  id: number;
   name: string;
 }
 interface FoodStore {
@@ -49,6 +51,18 @@ export const foodSlice = createSlice({
     builder.addCase(showCardAction.fulfilled, (state, action) => {
       state.cardSelected = action.payload.card;
       state.py = action.payload.py;
+    });
+    builder.addCase(duplicateCardAction.fulfilled, (state, action) => {
+      state.cards.push(action.payload);
+    });
+    builder.addCase(deleteCardAction.fulfilled, (state, action) => {
+      const index = state.cards.findIndex(
+        c => Number(c.id) === Number(action.payload),
+      );
+      console.log(action.payload, index);
+      if (index >= 0) {
+        state.cards.splice(index, 1);
+      }
     });
   },
 });

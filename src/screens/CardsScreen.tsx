@@ -74,7 +74,7 @@ export function CardsScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.list}
         data={cards}
-        keyExtractor={e => e.id}
+        keyExtractor={e => e.id.toString()}
         renderItem={({item}) => <CardStyle card={item} />}
       />
       {renderFooter()}

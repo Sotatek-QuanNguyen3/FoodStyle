@@ -5,6 +5,8 @@ import {
   TouchableOpacity,
   Image,
   Text,
+  Alert,
+  Share,
 } from 'react-native';
 import React, {useEffect, useRef} from 'react';
 import {BlurView} from '@react-native-community/blur';
@@ -14,6 +16,8 @@ import CardStyle from './CardStyle';
 import {Card, closeCard} from '../store/foodSlice';
 import {images} from '../assets/images';
 import {config} from '../config';
+import {deleteCardAction, duplicateCardAction} from '../store/foodThunk';
+import {shareCardQuery} from '../queries';
 
 export function CardOptions() {
   const card = useSelector<RootState>(s => s.food.cardSelected) as Card;
@@ -57,6 +61,52 @@ export function CardOptions() {
     }).start(() => dispatch(closeCard()));
   };
 
+  const share = async () => {
+    try {
+      close();
+      const code = await shareCardQuery(card.id);
+      Share.share({
+        message: card.name,
+        url: `https://cards.foodstyles.com/${code}`,
+      });
+    } catch (e) {
+      Alert.alert('', 'An error occurred. Please try again after some time.');
+    }
+  };
+
+  const duplicate = async () => {
+    close();
+    try {
+      await dispatch(duplicateCardAction(card.id)).unwrap();
+    } catch (e) {
+      Alert.alert('', 'An error occurred. Please try again after some time.');
+    }
+  };
+
+  const deleteCard = async () => {
+    Alert.alert(
+      'Confirm delete',
+      'This will delete the Food Style and all its settings.',
+      [
+        {
+          text: 'Delete',
+          onPress: async () => {
+            try {
+              close();
+              await dispatch(deleteCardAction(card.id)).unwrap();
+            } catch (e) {
+              Alert.alert(
+                '',
+                'An error occurred. Please try again after some time.',
+              );
+            }
+          },
+        },
+        {text: 'Cancel'},
+      ],
+    );
+  };
+
   return card && py > 0 ? (
     <BlurView style={styles.container} blurType="light" blurAmount={20}>
       <Animated.View style={[styles.wrapCard, {top}]}>
@@ -66,15 +116,15 @@ export function CardOptions() {
             styles.wrapOptions,
             {transform: [{scaleX: scale}, {scaleY: scale}]},
           ]}>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={share}>
             <Text style={styles.text}>Share</Text>
             <Image source={images.share} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={duplicate}>
             <Text style={styles.text}>Duplicate</Text>
             <Image source={images.duplicate} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={deleteCard}>
             <Text style={styles.text}>Delete</Text>
             <Image source={images.delete} />
           </TouchableOpacity>
@@ -98,6 +148,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     paddingRight: 20,
     alignSelf: 'flex-end',
+    paddingTop: 5,
   },
   text: {
     color: config.colors.green,

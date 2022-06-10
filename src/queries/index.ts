@@ -88,3 +88,43 @@ export const cardsQuery = () =>
       `,
     })
     .then(e => e.data.cards);
+
+export const deleteCardQuery = (id: number) =>
+  apolloClient
+    .mutate({
+      mutation: gql`
+        mutation {
+          deleteCard(
+            id: ${id}
+          )
+        }
+      `,
+    })
+    .then(e => e.data.deleteCard);
+
+export const shareCardQuery = (id: number) =>
+  apolloClient
+    .mutate({
+      mutation: gql`
+        mutation {
+          shareCard(
+            id: ${id}
+          )
+        }
+      `,
+    })
+    .then(e => e.data.shareCard);
+
+export const duplicateCardQuery = (id: number) =>
+  apolloClient
+    .mutate({
+      mutation: gql`
+        mutation {
+          duplicateCard(id: ${id}) {
+            id
+            name
+          }
+        }
+      `,
+    })
+    .then(e => e.data.duplicateCard);
